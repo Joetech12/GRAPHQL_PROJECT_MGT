@@ -10,10 +10,10 @@ const ClientSchema = new mongoose.Schema({
   phone: {
     type: 'string',
   },
-  projectId: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Project',
-  },
+//   projectId: {
+//     type: mongoose.Schema.Types.ObjectId,
+//     ref: 'Project',
+//   },
 });
 
 module.exports = mongoose.model('Client', ClientSchema);

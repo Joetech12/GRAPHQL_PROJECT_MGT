@@ -20,13 +20,13 @@ const ClientType = new GraphQLObjectType({
     name: { type: GraphQLString },
     email: { type: GraphQLString },
     phone: { type: GraphQLString },
-    projectId: { type: GraphQLString },
-    project: {
-      type: ProjectType,
-      resolve(parent, args) {
-        return Project.findById(parent.projectId);
-      },
-    },
+    // projectId: { type: GraphQLString },
+    // project: {
+    //   type: ProjectType,
+    //   resolve(parent, args) {
+    //     return Project.findById(parent.projectId);
+    //   },
+    // },
   }),
 });
 
@@ -92,7 +92,7 @@ const RootMutation = new GraphQLObjectType({
         name: { type: new GraphQLNonNull(GraphQLString) },
         email: { type: new GraphQLNonNull(GraphQLString) },
         phone: { type: new GraphQLNonNull(GraphQLString) },
-        projectId: { type: new GraphQLNonNull(GraphQLID) },
+        // projectId: { type: new GraphQLNonNull(GraphQLID) },
       },
       resolve(parent, args) {
         const client = new Client({
@@ -105,14 +105,20 @@ const RootMutation = new GraphQLObjectType({
     },
     // Delete a Client
     deleteClient: {
-      type: ClientType,
-      args: {
-        id: { type: new GraphQLNonNull(GraphQLID) },
+        type: ClientType,
+        args: {
+          id: { type: GraphQLNonNull(GraphQLID) },
+        },
+        resolve(parent, args) {
+          Project.find({ clientId: args.id }).then((projects) => {
+            projects.forEach((project) => {
+              project.deleteOne();
+            });
+          });
+  
+          return Client.findByIdAndRemove(args.id);
+        },
       },
-      resolve(parent, args) {
-        return Client.findByIdAndRemove(args.id);
-      },
-    },
 
     // Update a Client
     updateClient: {
